@@ -1,0 +1,42 @@
+# .github/workflows/nodejs-test.yml
+
+name: Node.js CI - Run Tests
+
+on:
+  # Run this workflow whenever code is pushed to the main branch
+  push:
+    branches: [ "main" ]
+  # Run this workflow when a pull request is created or updated for the main branch
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    # Specify the type of virtual environment to run on
+    runs-on: ubuntu-latest
+
+    # Testing against different versions of Node.js
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+
+    steps:
+    # Step 1: Check out the repository code
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Step 2: Set up Node.js and use the specified version
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: npm install
+
+    # Step 4: Run the tests
+    - name: Run tests
+      run: npm test
